@@ -1,0 +1,77 @@
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+[PATH] C:\Users\Spothopper\.local\bin
+
+----------
+
+local git
+
+git clone https://github.com/julijabozanic/drf.git
+
+git add .
+git commit -m ""
+git push origin main
+git log
+git status
+
+.git
+.gitignore
+
+----------
+
+uv init
+uv venv
+.venv\Scripts\activate
+deactivate
+
+uv add django djangorestframework django-environ ruff
+
+uv sync [uv pip freeze > requirements.txt, uv pip install requirements.txt]
+
+---
+
+pyproject.toml
+
+[tool.uv]
+package = false
+ 
+----------
+
+list: [1, 2, 3]
+
+tuple: (1, 2, 3)
+
+dict: {"key": value}
+
+----------
+
+ruff format .
+
+----------
+
+django-admin startproject config .
+python manage.py check
+python manage.py shell (exit())
+python manage.py runserver
+python manage.py startapp accounts
+python manage.py makemigrations accounts
+python manage.py migrate
+python manage.py createsuperuser
+python -c "import secrets; print(secrets.token_urlsafe(50))"
+
+----------
+
+C:\Program Files\PostgreSQL\18\bin [PATH]
+
+psql -U postgres (from postgres install)
+
+CREATE USER drf WITH PASSWORD 'pass';
+CREATE DATABASE drf OWNER drf;
+GRANT ALL PRIVILEGES ON DATABASE drf TO drf;
+
+psql -U drf -d drf -h localhost
+
+\q
+\d
+
+----------
