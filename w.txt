@@ -24,7 +24,17 @@ uv venv
 .venv\Scripts\activate
 deactivate
 
-uv add django djangorestframework django-environ ruff
+uv add django djangorestframework django-environ ruff httpie django-axes django-cors-headers psycopg[binary]
+
+python -m pip install ^
+    "django>=6.1.1" ^
+    "django-axes>=8.3.1" ^
+    "django-cors-headers>=4.9.0" ^
+    "django-environ>=0.14.0" ^
+    "djangorestframework>=3.18.1" ^
+    "psycopg[binary]>=3.3.5" ^
+    "ruff>=0.16.8" ^
+    "httpie>=3.2.4"
 
 uv sync [uv pip freeze > requirements.txt, uv pip install requirements.txt]
 
