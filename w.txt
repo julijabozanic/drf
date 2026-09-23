@@ -85,3 +85,7 @@ psql -U drf -d drf -h localhost
 \d
 
 ----------
+
+FOR /f "tokens=*" %z IN ('fnm env --use-on-cd') DO CALL %z
+
+----------

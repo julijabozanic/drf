@@ -1,12 +1,32 @@
-import { useState } from 'react'
+import { Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import Navbar from './components/Navbar';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import IssueListPage from './pages/IssueListPage';
+import IssueCreatePage from "./pages/IssueCreatePage";
+import IssueDetailPage from './pages/IssueDetailPage';
+import NotFoundPage from './pages/NotFoundPage';
 
-function App() {
-
+export default function App() {
   return (
-    <>
-      <h1>test</h1>
-    </>
-  )
-}
+    <AuthProvider>
+      <Navbar />
+      <main>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
-export default App
+        <Route element={<ProtectedRoute />}>
+        <Route path="/" element={<IssueListPage />} />
+        <Route path="/issues/new" element={<IssueCreatePage />} />
+        <Route path="/issues/:id" element={<IssueDetailPage />} />
+      </Route>
+
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+      </main>
+    </AuthProvider>
+  );
+}
