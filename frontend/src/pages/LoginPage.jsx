@@ -35,8 +35,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="container-narrow">
-      <h1>Log in</h1>
+  <div className="auth-page">
+    <div className="auth-card">
+      <div className="auth-header">
+        <div className="auth-logo">IT</div>
+
+        <h1>Welcome back</h1>
+        <p>Log in to your Issue Tracker account</p>
+      </div>
 
       {error && (
         <div className="error-banner" role="alert" aria-live="assertive">
@@ -44,7 +50,7 @@ export default function LoginPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="auth-form">
         <div className="form-group">
           <label htmlFor="username">Username</label>
           <input
@@ -52,10 +58,15 @@ export default function LoginPage() {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter your username"
+            autoComplete="username"
             required
           />
+
           {fieldErrors.username && (
-            <div className="field-error">{fieldErrors.username[0]}</div>
+            <div className="field-error">
+              {fieldErrors.username[0]}
+            </div>
           )}
         </div>
 
@@ -66,21 +77,32 @@ export default function LoginPage() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            autoComplete="current-password"
             required
           />
+
           {fieldErrors.password && (
-            <div className="field-error">{fieldErrors.password[0]}</div>
+            <div className="field-error">
+              {fieldErrors.password[0]}
+            </div>
           )}
         </div>
 
-        <button type="submit" disabled={submitting}>
+        <button
+          type="submit"
+          className="auth-button"
+          disabled={submitting}
+        >
           {submitting ? 'Logging in...' : 'Log in'}
         </button>
       </form>
 
-      <p className="meta">
-        No account? <Link to="/register">Register</Link>
+      <p className="auth-footer">
+        Don't have an account?{' '}
+        <Link to="/register">Create account</Link>
       </p>
     </div>
-  );
+  </div>
+);
 }

@@ -39,61 +39,86 @@ export default function IssueCreatePage() {
   }
 
   return (
-    <div className="container">
-      <Link to="/">&larr; Back to issues</Link>
-      <h1>New issue</h1>
+    <div className="container app-container">
+      <Link to="/" className="back-link">
+        ← Back to issues
+      </Link>
 
-      {error && (
-        <div className="error-banner" role="alert" aria-live="assertive">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="title">Title</label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-          {fieldErrors.title && (
-            <div className="field-error">{fieldErrors.title[0]}</div>
-          )}
+      <div className="page-panel">
+        <div className="panel-header">
+          <h1>New issue</h1>
+          <p>Describe the problem and choose its priority.</p>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-          {fieldErrors.description && (
-            <div className="field-error">{fieldErrors.description[0]}</div>
-          )}
-        </div>
+        {error && (
+          <div className="error-banner" role="alert" aria-live="assertive">
+            {error}
+          </div>
+        )}
 
-        <div className="form-group">
-          <label htmlFor="priority">Priority</label>
-          <select
-            id="priority"
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="title">Title</label>
+
+            <input
+              id="title"
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Short summary of the issue"
+              required
+            />
+
+            {fieldErrors.title && (
+              <div className="field-error">
+                {fieldErrors.title[0]}
+              </div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="description">Description</label>
+
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Describe what happened..."
+              required
+            />
+
+            {fieldErrors.description && (
+              <div className="field-error">
+                {fieldErrors.description[0]}
+              </div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="priority">Priority</label>
+
+            <select
+              id="priority"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+            >
+              {PRIORITY_OPTIONS.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            className="primary-button"
+            type="submit"
+            disabled={submitting}
           >
-            {PRIORITY_OPTIONS.map((p) => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
-        </div>
-
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'Creating...' : 'Create issue'}
-        </button>
-      </form>
+            {submitting ? 'Creating...' : 'Create issue'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

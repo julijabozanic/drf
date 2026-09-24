@@ -13,30 +13,67 @@ export default function Navbar() {
     navigate('/login');
   }
 
+  function closeMenu() {
+    setOpen(false);
+  }
+
   return (
     <nav className="navbar">
-      <Link to="/" className="navbar-brand">Issue Tracker</Link>
+      <Link
+        to="/"
+        className="navbar-brand"
+        onClick={closeMenu}
+      >
+        <span className="navbar-logo">IT</span>
+        <span>Issue Tracker</span>
+      </Link>
 
       <button
+        type="button"
         className="navbar-toggle"
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen((prev) => !prev)}
         aria-expanded={open}
-        aria-label="Toggle navigation"
+        aria-label={open ? 'Close navigation' : 'Open navigation'}
       >
-        ☰
+        {open ? '×' : '☰'}
       </button>
 
-      <div className={`navbar-links${open ? ' open' : ''}`}>
+      <div className={`navbar-links ${open ? 'open' : ''}`}>
         {isAuthenticated ? (
           <>
-            <span className="meta">{user.username}</span>
-            <Link to="/" onClick={() => setOpen(false)}>Issues</Link>
-            <button className="secondary" onClick={handleLogout}>Log out</button>
+            <span className="navbar-user">
+              {user.username}
+            </span>
+
+            <Link to="/" onClick={closeMenu}>
+              Issues
+            </Link>
+
+            <Link to="/issues/new" onClick={closeMenu}>
+              New issue
+            </Link>
+
+            <button
+              type="button"
+              className="navbar-logout"
+              onClick={handleLogout}
+            >
+              Log out
+            </button>
           </>
         ) : (
           <>
-            <Link to="/login" onClick={() => setOpen(false)}>Log in</Link>
-            <Link to="/register" onClick={() => setOpen(false)}>Register</Link>
+            <Link to="/login" onClick={closeMenu}>
+              Log in
+            </Link>
+
+            <Link
+              to="/register"
+              className="navbar-register"
+              onClick={closeMenu}
+            >
+              Register
+            </Link>
           </>
         )}
       </div>
