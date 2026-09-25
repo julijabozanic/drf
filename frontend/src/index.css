@@ -1632,3 +1632,164 @@ main {
     padding-right: 1rem;
   }
 }
+/* =========================
+   ADMIN / DANGER ZONE
+   ========================= */
+
+.admin-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+
+  margin-top: 2rem;
+  padding: 1.25rem;
+
+  background: #fff7f7;
+
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+}
+
+.admin-actions h2 {
+  margin: 0 0 0.25rem;
+
+  color: #991b1b;
+
+  font-size: 1rem;
+}
+
+.admin-actions p {
+  margin: 0;
+
+  color: #7f1d1d;
+
+  font-size: 0.85rem;
+}
+
+.delete-issue-button {
+  width: auto;
+  flex-shrink: 0;
+
+  color: #ffffff;
+  background: #dc2626;
+
+  border: none;
+  border-radius: 8px;
+
+  font-weight: 600;
+}
+
+.delete-issue-button:hover:not(:disabled) {
+  opacity: 1;
+  background: #b91c1c;
+}
+
+.delete-issue-button:disabled {
+  background: #fca5a5;
+}
+
+
+/* Mobile */
+
+@media (max-width: 640px) {
+  .admin-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .delete-issue-button {
+    width: 100%;
+  }
+}
+
+.issue-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.edit-issue-button {
+  width: auto;
+  padding: 0.55rem 0.9rem;
+
+  color: #2563eb;
+  background: #eff6ff;
+
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.edit-issue-button:hover {
+  opacity: 1;
+  background: #dbeafe;
+}
+
+.issue-edit-section {
+  padding: 1.5rem 0;
+
+  border-top: 1px solid #e2e8f0;
+}
+
+.issue-edit-section h2 {
+  margin-bottom: 1.25rem;
+
+  color: #0f172a;
+  font-size: 1.1rem;
+}
+
+.issue-edit-section textarea {
+  min-height: 160px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.75rem;
+
+  margin-top: 1.5rem;
+}
+
+.save-issue-button {
+  width: auto;
+
+  background: #2563eb;
+}
+
+.save-issue-button:hover:not(:disabled) {
+  opacity: 1;
+  background: #1d4ed8;
+}
+
+.cancel-edit-button {
+  width: auto;
+
+  color: #475569;
+  background: #ffffff;
+
+  border: 1px solid #cbd5e1;
+}
+
+.cancel-edit-button:hover:not(:disabled) {
+  opacity: 1;
+  background: #f8fafc;
+}
+
+@media (max-width: 640px) {
+  .issue-detail-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .edit-actions {
+    flex-direction: column;
+  }
+
+  .save-issue-button,
+  .cancel-edit-button {
+    width: 100%;
+  }
+}

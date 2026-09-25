@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useAuth } from '../context/AuthContext';
 import { apiFetch, ApiError } from '../api/client';
@@ -14,14 +14,29 @@ const STATUS_OPTIONS = [
   'closed',
 ];
 
+const PRIORITY_OPTIONS = [
+  'low',
+  'medium',
+  'high',
+];
+
 export default function IssueDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { isAdmin } = useAuth();
 
   const [issue, setIssue] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
   const [statusUpdating, setStatusUpdating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editPriority, setEditPriority] = useState('medium');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     loadIssue();
@@ -68,6 +83,82 @@ export default function IssueDetailPage() {
       );
     } finally {
       setStatusUpdating(false);
+    }
+  }
+
+  function startEditing() {
+    setEditTitle(issue.title);
+    setEditDescription(issue.description);
+    setEditPriority(issue.priority);
+
+    setError('');
+    setIsEditing(true);
+  }
+
+  function cancelEditing() {
+    setEditTitle('');
+    setEditDescription('');
+    setEditPriority('medium');
+
+    setError('');
+    setIsEditing(false);
+  }
+
+  async function handleUpdate(e) {
+    e.preventDefault();
+
+    setSaving(true);
+    setError('');
+
+    try {
+      const data = await apiFetch(`/issues/${id}/`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          title: editTitle,
+          description: editDescription,
+          priority: editPriority,
+        }),
+      });
+
+      setIssue(data);
+      setIsEditing(false);
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : 'Something went wrong.'
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete() {
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this issue? This action cannot be undone.'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setDeleting(true);
+    setError('');
+
+    try {
+      await apiFetch(`/issues/${id}/`, {
+        method: 'DELETE',
+      });
+
+      navigate('/');
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : 'Something went wrong.'
+      );
+
+      setDeleting(false);
     }
   }
 
@@ -132,11 +223,23 @@ export default function IssueDetailPage() {
             </p>
           </div>
 
-          <span
-            className={`priority-badge priority-${issue.priority}`}
-          >
-            {formatPriority(issue.priority)}
-          </span>
+          <div className="issue-detail-actions">
+            {!isEditing && (
+              <button
+                type="button"
+                className="edit-issue-button"
+                onClick={startEditing}
+              >
+                Edit issue
+              </button>
+            )}
+
+            <span
+              className={`priority-badge priority-${issue.priority}`}
+            >
+              {formatPriority(issue.priority)}
+            </span>
+          </div>
         </div>
 
         {/* Error */}
@@ -150,7 +253,7 @@ export default function IssueDetailPage() {
           </div>
         )}
 
-        {/* Issue information */}
+        {/* Status */}
         <div className="issue-info">
           <div className="issue-info-item">
             <span className="info-label">
@@ -197,34 +300,143 @@ export default function IssueDetailPage() {
           </div>
         </div>
 
-        {/* Description */}
-        <section className="issue-description">
-          <h2>Description</h2>
+        {/* Edit form / Description */}
+        {isEditing ? (
+          <section className="issue-edit-section">
+            <h2>Edit issue</h2>
 
-          <p className="word-wrap">
-            {issue.description}
-          </p>
-        </section>
+            <form onSubmit={handleUpdate}>
+              <div className="form-group">
+                <label htmlFor="edit-title">
+                  Title
+                </label>
+
+                <input
+                  id="edit-title"
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) =>
+                    setEditTitle(e.target.value)
+                  }
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-description">
+                  Description
+                </label>
+
+                <textarea
+                  id="edit-description"
+                  value={editDescription}
+                  onChange={(e) =>
+                    setEditDescription(e.target.value)
+                  }
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-priority">
+                  Priority
+                </label>
+
+                <select
+                  id="edit-priority"
+                  value={editPriority}
+                  onChange={(e) =>
+                    setEditPriority(e.target.value)
+                  }
+                >
+                  {PRIORITY_OPTIONS.map((priority) => (
+                    <option
+                      key={priority}
+                      value={priority}
+                    >
+                      {formatPriority(priority)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="edit-actions">
+                <button
+                  type="submit"
+                  className="save-issue-button"
+                  disabled={saving}
+                >
+                  {saving
+                    ? 'Saving...'
+                    : 'Save changes'}
+                </button>
+
+                <button
+                  type="button"
+                  className="cancel-edit-button"
+                  onClick={cancelEditing}
+                  disabled={saving}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </section>
+        ) : (
+          <section className="issue-description">
+            <h2>Description</h2>
+
+            <p className="word-wrap">
+              {issue.description}
+            </p>
+          </section>
+        )}
 
         {/* Comments */}
-        <section className="comments-section">
-          <div className="comments-header">
-            <h2>
-              Comments ({issue.comments?.length ?? 0})
-            </h2>
-          </div>
+        {!isEditing && (
+          <section className="comments-section">
+            <div className="comments-header">
+              <h2>
+                Comments ({issue.comments?.length ?? 0})
+              </h2>
+            </div>
 
-          <CommentList
-            comments={issue.comments ?? []}
-          />
-
-          <div className="comment-form-wrapper">
-            <CommentForm
-              issueId={issue.id}
-              onAdded={handleCommentAdded}
+            <CommentList
+              comments={issue.comments ?? []}
             />
-          </div>
-        </section>
+
+            <div className="comment-form-wrapper">
+              <CommentForm
+                issueId={issue.id}
+                onAdded={handleCommentAdded}
+              />
+            </div>
+          </section>
+        )}
+
+        {/* Admin-only delete */}
+        {isAdmin && !isEditing && (
+          <section className="admin-actions">
+            <div>
+              <h2>Danger zone</h2>
+
+              <p>
+                Deleting an issue is permanent and cannot be undone.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="delete-issue-button"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting
+                ? 'Deleting...'
+                : 'Delete issue'}
+            </button>
+          </section>
+        )}
       </div>
     </div>
   );
@@ -238,8 +450,8 @@ function formatStatus(status) {
 
 function formatPriority(priority) {
   return (
-    priority.charAt(0).toUpperCase() +
-    priority.slice(1)
+    priority.charAt(0).toUpperCase()
+    + priority.slice(1)
   );
 }
 
