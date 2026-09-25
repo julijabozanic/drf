@@ -13,13 +13,23 @@ export default function IssueCard({ issue }) {
 
         <div className="issue-card-content">
           <div className="issue-card-top">
-            <div>
-              <h3>{issue.title}</h3>
+            <div className="issue-card-main">
+              <h3 className="word-wrap">
+                {issue.title}
+              </h3>
 
               <div className="issue-meta">
-                <span>{issue.author}</span>
-                <span className="meta-dot">•</span>
-                <span>{formatDate(issue.created_at)}</span>
+                <span>
+                  Reported by {issue.author}
+                </span>
+
+                <span className="meta-dot">
+                  •
+                </span>
+
+                <span>
+                  {formatDate(issue.created_at)}
+                </span>
               </div>
             </div>
 
@@ -30,13 +40,26 @@ export default function IssueCard({ issue }) {
             </span>
           </div>
 
-          <div className="issue-badges">
-            <span
-              className={`status-badge status-${issue.status}`}
-            >
-              <span className="badge-dot" />
-              {formatStatus(issue.status)}
-            </span>
+          <div className="issue-card-bottom">
+            <div className="issue-badges">
+              <span
+                className={`status-badge status-${issue.status}`}
+              >
+                <span className="badge-dot" />
+
+                {formatStatus(issue.status)}
+              </span>
+            </div>
+
+            <div className="issue-assignee">
+              <span className="issue-assignee-label">
+                Assigned to
+              </span>
+
+              <span className="issue-assignee-name">
+                {issue.assignee?.username ?? 'Unassigned'}
+              </span>
+            </div>
           </div>
         </div>
       </article>
@@ -51,7 +74,10 @@ function formatStatus(status) {
 }
 
 function formatPriority(priority) {
-  return priority.charAt(0).toUpperCase() + priority.slice(1);
+  return (
+    priority.charAt(0).toUpperCase()
+    + priority.slice(1)
+  );
 }
 
 function formatDate(iso) {

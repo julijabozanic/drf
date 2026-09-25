@@ -482,7 +482,14 @@ button.secondary {
   }
 
   .issue-info {
-    grid-template-columns: 1fr;
+    display: grid;
+
+    grid-template-columns:
+      repeat(auto-fit, minmax(180px, 1fr));
+
+    gap: 1rem;
+
+    margin: 1.5rem 0;
   }
 }
 
@@ -1790,6 +1797,64 @@ main {
 
   .save-issue-button,
   .cancel-edit-button {
+    width: 100%;
+  }
+}
+
+.assignee-name {
+  display: inline-block;
+
+  color: #334155;
+
+  font-weight: 600;
+}
+
+.issue-card-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.issue-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  margin-top: 0.9rem;
+}
+
+.issue-assignee {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  color: #64748b;
+
+  font-size: 0.8rem;
+}
+
+.issue-assignee strong {
+  color: #334155;
+  font-weight: 600;
+}
+
+.issue-assignee-label {
+  color: #94a3b8;
+}
+
+.issue-assignee-name {
+  color: #334155;
+
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .issue-card-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .issue-assignee {
     width: 100%;
   }
 }

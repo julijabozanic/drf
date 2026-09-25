@@ -4,15 +4,15 @@ from rest_framework.viewsets import ModelViewSet
 
 from accounts.permissions import IsAdmin
 from .models import Comment, Issue
-from .permissions import IsAuthorOrAdmin
+from .permissions import IsAuthorOrAdmin, IsIssueParticipantOrAdmin
 from .serializers import CommentSerializer, IssueListSerializer, IssueSerializer
 
 
 class IssueViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated, IsAuthorOrAdmin]
+    permission_classes = [IsAuthenticated, IsAuthorOrAdmin,IsIssueParticipantOrAdmin]
 
     def get_queryset(self):
-        qs = Issue.objects.visible_to(self.request.user).select_related("author")
+        qs = Issue.objects.visible_to(self.request.user).select_related("author", "assignee")
         if self.action != "list":
             qs = qs.prefetch_related("comments__author")
         return qs

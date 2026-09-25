@@ -5,7 +5,7 @@ from .models import Comment, Issue
 
 @admin.register(Issue)
 class IssueAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "author", "priority", "status", "created_at"]
+    list_display = ["id", "title", "author", "assignee", "priority", "status", "created_at"]
     list_filter = ["status", "priority"]
     search_fields = ["title", "author__username"]
 
@@ -13,4 +13,4 @@ class IssueAdmin(admin.ModelAdmin):
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ["id", "issue", "author", "created_at"]
-    search_fields = ["body", "author__username"]
+    search_fields = ["body", "author__username", "assignee__username"]

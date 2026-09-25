@@ -23,7 +23,7 @@ const PRIORITY_OPTIONS = [
 export default function IssueDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
 
   const [issue, setIssue] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,9 +38,19 @@ export default function IssueDetailPage() {
   const [editPriority, setEditPriority] = useState('medium');
   const [saving, setSaving] = useState(false);
 
+  // Assign
+  const [users, setUsers] = useState([]);
+  const [assigning, setAssigning] = useState(false);
+
   useEffect(() => {
     loadIssue();
   }, [id]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      loadUsers();
+    }
+  }, [isAdmin]);
 
   async function loadIssue() {
     setLoading(true);
@@ -57,6 +67,47 @@ export default function IssueDetailPage() {
       );
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadUsers() {
+    try {
+      const data = await apiFetch('/auth/users/');
+      setUsers(data);
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : 'Could not load users.'
+      );
+    }
+  }
+
+  async function handleAssigneeChange(e) {
+    const value = e.target.value;
+
+    setAssigning(true);
+    setError('');
+
+    try {
+      const data = await apiFetch(`/issues/${id}/`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          assignee_id: value
+            ? Number(value)
+            : null,
+        }),
+      });
+
+      setIssue(data);
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : 'Something went wrong.'
+      );
+    } finally {
+      setAssigning(false);
     }
   }
 
@@ -201,6 +252,12 @@ export default function IssueDetailPage() {
     return null;
   }
 
+  const canEditIssue =
+    isAdmin || issue.author_id === user?.id;
+
+  const canChangeStatus =
+    isAdmin || issue.assignee?.id === user?.id;
+
   return (
     <div className="container app-container">
       <Link to="/" className="back-link">
@@ -217,14 +274,14 @@ export default function IssueDetailPage() {
             </h1>
 
             <p className="meta">
-              {issue.author}
+              Reported by {issue.author}
               {' · '}
               {formatDate(issue.created_at)}
             </p>
           </div>
 
           <div className="issue-detail-actions">
-            {!isEditing && (
+            {canEditIssue && !isEditing && (
               <button
                 type="button"
                 className="edit-issue-button"
@@ -253,14 +310,16 @@ export default function IssueDetailPage() {
           </div>
         )}
 
-        {/* Status */}
+        {/* Issue information */}
         <div className="issue-info">
+
+          {/* Status */}
           <div className="issue-info-item">
             <span className="info-label">
               Status
             </span>
 
-            {isAdmin ? (
+            {canChangeStatus ? (
               <select
                 id="status"
                 value={issue.status}
@@ -281,12 +340,12 @@ export default function IssueDetailPage() {
                 className={`status-badge status-${issue.status}`}
               >
                 <span className="badge-dot" />
-
                 {formatStatus(issue.status)}
               </span>
             )}
           </div>
 
+          {/* Priority */}
           <div className="issue-info-item">
             <span className="info-label">
               Priority
@@ -297,6 +356,38 @@ export default function IssueDetailPage() {
             >
               {formatPriority(issue.priority)}
             </span>
+          </div>
+
+          {/* Assignee */}
+          <div className="issue-info-item">
+            <span className="info-label">
+              Assigned to
+            </span>
+
+            {isAdmin ? (
+              <select
+                value={issue.assignee?.id ?? ''}
+                onChange={handleAssigneeChange}
+                disabled={assigning}
+              >
+                <option value="">
+                  Unassigned
+                </option>
+
+                {users.map((assignableUser) => (
+                  <option
+                    key={assignableUser.id}
+                    value={assignableUser.id}
+                  >
+                    {assignableUser.username}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span className="assignee-name">
+                {issue.assignee?.username ?? 'Unassigned'}
+              </span>
+            )}
           </div>
         </div>
 

@@ -1,10 +1,16 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 
 
 class IssueQuerySet(models.QuerySet):
     def visible_to(self, user):
-        return self if user.is_admin else self.filter(author=user)
+        if user.is_admin:
+            return self
+
+        return self.filter(
+            Q(author=user) | Q(assignee=user)
+        ).distinct()
 
 
 class Issue(models.Model):
@@ -31,6 +37,13 @@ class Issue(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="issues",
+    )
+    assignee = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="assigned_issues",
+        null=True,
+        blank=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

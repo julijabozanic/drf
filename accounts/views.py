@@ -1,12 +1,19 @@
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, get_user_model
 from django.middleware.csrf import get_token
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import LoginSerializer, RegisterSerializer, UserSerializer
+from .serializers import (
+    AssignmentUserSerializer,
+    LoginSerializer,
+    RegisterSerializer,
+    UserSerializer,
+)
+from .permissions import IsAdmin
 
+User = get_user_model()
 
 class CSRFView(APIView):
     permission_classes = [AllowAny]
@@ -51,3 +58,23 @@ class MeView(APIView):
 
     def get(self, request):
         return Response(UserSerializer(request.user).data)
+
+class UserListView(APIView):
+    permission_classes = [
+        IsAuthenticated,
+        IsAdmin,
+    ]
+
+    def get(self, request):
+        users = (
+            User.objects
+            .filter(is_active=True)
+            .order_by("username")
+        )
+
+        serializer = AssignmentUserSerializer(
+            users,
+            many=True,
+        )
+
+        return Response(serializer.data)
