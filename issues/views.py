@@ -9,7 +9,7 @@ from .serializers import CommentSerializer, IssueListSerializer, IssueSerializer
 
 
 class IssueViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated, IsAuthorOrAdmin,IsIssueParticipantOrAdmin]
+    permission_classes = [IsAuthenticated, IsIssueParticipantOrAdmin]
 
     def get_queryset(self):
         qs = Issue.objects.visible_to(self.request.user).select_related("author", "assignee")
