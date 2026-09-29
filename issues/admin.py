@@ -5,7 +5,15 @@ from .models import Comment, Issue
 
 @admin.register(Issue)
 class IssueAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "author", "assignee", "priority", "status", "created_at"]
+    list_display = [
+        "id",
+        "title",
+        "author",
+        "assignee",
+        "priority",
+        "status",
+        "created_at",
+    ]
     list_filter = ["status", "priority"]
     search_fields = ["title", "author__username"]
 

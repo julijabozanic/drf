@@ -8,9 +8,7 @@ class IssueQuerySet(models.QuerySet):
         if user.is_admin:
             return self
 
-        return self.filter(
-            Q(author=user) | Q(assignee=user)
-        ).distinct()
+        return self.filter(Q(author=user) | Q(assignee=user)).distinct()
 
 
 class Issue(models.Model):

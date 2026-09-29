@@ -15,6 +15,7 @@ from .permissions import IsAdmin
 
 User = get_user_model()
 
+
 class CSRFView(APIView):
     permission_classes = [AllowAny]
 
@@ -30,7 +31,7 @@ class RegisterView(APIView):
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        login(request, user, backend="django.contrib.auth.backends.ModelBackend")
         return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
 
@@ -59,6 +60,7 @@ class MeView(APIView):
     def get(self, request):
         return Response(UserSerializer(request.user).data)
 
+
 class UserListView(APIView):
     permission_classes = [
         IsAuthenticated,
@@ -66,11 +68,7 @@ class UserListView(APIView):
     ]
 
     def get(self, request):
-        users = (
-            User.objects
-            .filter(is_active=True)
-            .order_by("username")
-        )
+        users = User.objects.filter(is_active=True).order_by("username")
 
         serializer = AssignmentUserSerializer(
             users,

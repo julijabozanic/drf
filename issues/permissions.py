@@ -16,8 +16,4 @@ class IsIssueParticipantOrAdmin(BasePermission):
 
         user = request.user
 
-        return (
-            user.is_admin
-            or obj.author_id == user.id
-            or obj.assignee_id == user.id
-        )
+        return user.is_admin or obj.author_id == user.id or obj.assignee_id == user.id

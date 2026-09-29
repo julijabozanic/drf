@@ -14,9 +14,7 @@ class AssigneeSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(
-        source="author.username"
-    )
+    author = serializers.ReadOnlyField(source="author.username")
 
     class Meta:
         model = Comment
@@ -37,17 +35,11 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class IssueSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(
-        source="author.username"
-    )
+    author = serializers.ReadOnlyField(source="author.username")
 
-    author_id = serializers.ReadOnlyField(
-        source="author.id"
-    )
+    author_id = serializers.ReadOnlyField(source="author.id")
 
-    assignee = AssigneeSerializer(
-        read_only=True
-    )
+    assignee = AssigneeSerializer(read_only=True)
 
     assignee_id = serializers.PrimaryKeyRelatedField(
         source="assignee",
@@ -111,8 +103,9 @@ class IssueSerializer(serializers.ModelSerializer):
             if forbidden:
                 raise serializers.ValidationError(
                     {
-                        self._field_name(field):
-                        "You do not have permission to set this field."
+                        self._field_name(
+                            field
+                        ): "You do not have permission to set this field."
                         for field in forbidden
                     }
                 )
@@ -141,8 +134,9 @@ class IssueSerializer(serializers.ModelSerializer):
         if forbidden:
             raise serializers.ValidationError(
                 {
-                    self._field_name(field):
-                    "You do not have permission to update this field."
+                    self._field_name(
+                        field
+                    ): "You do not have permission to update this field."
                     for field in forbidden
                 }
             )
@@ -158,17 +152,11 @@ class IssueSerializer(serializers.ModelSerializer):
 
 
 class IssueListSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(
-        source="author.username"
-    )
+    author = serializers.ReadOnlyField(source="author.username")
 
-    author_id = serializers.ReadOnlyField(
-        source="author.id"
-    )
+    author_id = serializers.ReadOnlyField(source="author.id")
 
-    assignee = AssigneeSerializer(
-        read_only=True
-    )
+    assignee = AssigneeSerializer(read_only=True)
 
     class Meta:
         model = Issue

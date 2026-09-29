@@ -12,7 +12,9 @@ class IssueViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsIssueParticipantOrAdmin]
 
     def get_queryset(self):
-        qs = Issue.objects.visible_to(self.request.user).select_related("author", "assignee")
+        qs = Issue.objects.visible_to(self.request.user).select_related(
+            "author", "assignee"
+        )
         if self.action != "list":
             qs = qs.prefetch_related("comments__author")
         return qs
